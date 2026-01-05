@@ -28,6 +28,7 @@ class _RevisionScreenState extends State<RevisionScreen> {
   List<dynamic> _preguntas = [];
   bool cargando = true;
   Map<String, dynamic> _respuestas = {};
+  final Map<String, TextEditingController> _controllers = {};
   SharedPreferences? prefs;
   String? employeeNumber;
 
@@ -59,11 +60,25 @@ class _RevisionScreenState extends State<RevisionScreen> {
     if (prefs != null) {
       String? respuestasGuardadas = prefs!.getString('respuestas_revision');
       if (respuestasGuardadas != null) {
+        final data = jsonDecode(respuestasGuardadas);
         setState(() {
-          _respuestas = jsonDecode(respuestasGuardadas);
+          _respuestas = data;
+        });
+
+        // Crea controladores con el texto guardado
+        data.forEach((key, value) {
+          _controllers[key] = TextEditingController(text: value);
         });
       }
     }
+  }
+
+  @override
+  void dispose() {
+    for (var controller in _controllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   Future<void> dataInicio() async {
@@ -212,19 +227,25 @@ class _RevisionScreenState extends State<RevisionScreen> {
                                     fontSize: 14.0,
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.buttonText(
-                                        Theme.of(context).brightness ==
-                                            Brightness.dark)),
+                                        Theme.of(context).brightness == Brightness.dark)),
                               ),
                               SizedBox(width: 10.0),
-                              Text(
-                                widget.uuid,
-                                style: TextStyle(
-                                  fontSize: 12.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.buttonText(
-                                      Provider.of<ThemeProvider>(context)
-                                              .themeMode ==
-                                          ThemeMode.dark),
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Text(
+                                    widget.uuid,
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.buttonText(
+                                        Provider.of<ThemeProvider>(context)
+                                                .themeMode ==
+                                            ThemeMode.dark,
+                                      ),
+                                    ),
+                                    overflow: TextOverflow.visible,
+                                  ),
                                 ),
                               ),
                             ],
@@ -244,15 +265,22 @@ class _RevisionScreenState extends State<RevisionScreen> {
                                             ThemeMode.dark)),
                               ),
                               SizedBox(width: 10.0),
-                              Text(
-                                widget.nombreSucursal,
-                                style: TextStyle(
-                                  fontSize: 12.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.buttonText(
-                                      Provider.of<ThemeProvider>(context)
-                                              .themeMode ==
-                                          ThemeMode.dark),
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Text(
+                                    widget.nombreSucursal,
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.buttonText(
+                                        Provider.of<ThemeProvider>(context)
+                                                .themeMode ==
+                                            ThemeMode.dark,
+                                      ),
+                                    ),
+                                    overflow: TextOverflow.visible,
+                                  ),
                                 ),
                               ),
                             ],
@@ -351,22 +379,22 @@ class _RevisionScreenState extends State<RevisionScreen> {
         return _buildCard(
           preguntaTexto,
           TextField(
+            controller: _controllers.putIfAbsent(
+              preguntaId,
+              () => TextEditingController(text: _respuestas[preguntaId] ?? ''),
+            ),
             decoration: InputDecoration(
               hintText: 'Escribe tu respuesta aquí',
-              border:
-                  OutlineInputBorder(), // Opcional: añade un borde para mejor visualización
+              border: const OutlineInputBorder(),
             ),
-            style: TextStyle(color: Colors.black),
-            maxLines: null, // Permite múltiples líneas
-            keyboardType:
-                TextInputType.multiline, // Habilita teclado de múltiples líneas
+            style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
+            maxLines: null,
+            keyboardType: TextInputType.multiline,
             onChanged: (value) {
-              setState(() {
-                _respuestas[preguntaId] = value;
-              });
-              guardarRespuestasEnPrefs(); // Guardar en SharedPreferences
+              _respuestas[preguntaId] = value;
+              guardarRespuestasEnPrefs(); // guarda en prefs
             },
-          ),
+          )
         );
       case 'date':
         return _buildCard(

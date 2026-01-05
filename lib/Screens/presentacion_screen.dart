@@ -220,7 +220,9 @@ class _RevisionPresentacionScreenState
                             style: TextStyle(
                               fontSize: 18.0,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.primary(Theme.of(context).brightness == Brightness.dark),
+                              color: AppColors.primary(
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark),
                             ),
                           ),
                           backgroundColor: AppColors.background(
@@ -255,7 +257,8 @@ class _RevisionPresentacionScreenState
               ? AppColors.amarillo()
               : (contenido as Text).data == 'Rojo'
                   ? AppColors.rojo()
-                  : AppColors.element(Theme.of(context).brightness == Brightness.dark),
+                  : AppColors.element(
+                      Theme.of(context).brightness == Brightness.dark),
       child: Container(
         width: double
             .infinity, // Esto hace que la Card ocupe todo el ancho disponible
@@ -271,8 +274,9 @@ class _RevisionPresentacionScreenState
               ),
             ),
             SizedBox(height: 8.0),
-            if (RegExp(r'^[A-Za-z]{3}, \d{2} [A-Za-z]{3} \d{4} \d{2}:\d{2}:\d{2} GMT$')
-                    .hasMatch(contenido.data ?? ''))
+            if (RegExp(
+                    r'^[A-Za-z]{3}, \d{2} [A-Za-z]{3} \d{4} \d{2}:\d{2}:\d{2} GMT$')
+                .hasMatch(contenido.data ?? ''))
               Text(formatearFecha(contenido.data!))
             else
               contenido

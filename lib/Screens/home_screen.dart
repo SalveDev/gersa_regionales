@@ -99,11 +99,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: cargando
-          ? Center(child: CircularProgressIndicator()) // Indicador de carga
+          ? Center(child: CircularProgressIndicator())
           : RefreshIndicator(
-              onRefresh:refresh, // Llamar a la función al hacer pull-to-refresh
-              color: AppColors.primary(Theme.of(context).brightness == Brightness.dark),
-              backgroundColor: AppColors.background(Theme.of(context).brightness == Brightness.dark),
+              onRefresh: refresh,
+              color: AppColors.primary(
+                  Theme.of(context).brightness == Brightness.dark),
+              backgroundColor: AppColors.background(
+                  Theme.of(context).brightness == Brightness.dark),
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Column(
@@ -120,20 +122,28 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemCount: revisiones.length,
                         itemBuilder: (context, index) {
                           final revision = revisiones[index];
-                          return Card(                            
+                          return Card(
                             elevation: 3,
                             margin: EdgeInsets.symmetric(vertical: 8),
                             child: ListTile(
                               onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => RevisionPresentacionScreen(uuid: revision["uuid"])));
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        RevisionPresentacionScreen(
+                                      uuid: revision["uuid"],
+                                    ),
+                                  ),
+                                );
                               },
                               leading: Icon(
                                 Icons.circle,
                                 color: (revision["calificacion"] == "Verde")
-                                ? AppColors.verde()
-                                : (revision["calificacion"] == "Amarillo")
-                                ? AppColors.amarillo()
-                                : AppColors.rojo(),
+                                    ? AppColors.verde()
+                                    : (revision["calificacion"] == "Amarillo")
+                                        ? AppColors.amarillo()
+                                        : AppColors.rojo(),
                               ),
                               title: Text(revision["sucursal"]),
                               subtitle: Column(
@@ -152,21 +162,29 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                     ),
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => NuevaRevisionScreen()));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 40, vertical: 15),
-                        ),
-                        child: Text('Nueva Revisión'),
-                      ),
-                    SizedBox(height: 20),
                   ],
                 ),
               ),
             ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NuevaRevisionScreen(),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+            ),
+            child: Text('Nueva Revisión'),
+          ),
+        ),
+      ),
     );
   }
 }
